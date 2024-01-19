@@ -1,0 +1,6 @@
+@DigitaleDeltaMetaDataValidatorService_HostAddress = http://localhost:5206
+
+GET {{DigitaleDeltaMetaDataValidatorService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
