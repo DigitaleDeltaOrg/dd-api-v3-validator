@@ -9,7 +9,7 @@ namespace DigitaleDeltaMetaDataValidator;
 /// <summary>
 /// Validates a CSDL according to the specified CSV data located at validationUrl
 /// </summary>
-public class DigitaleDeltaMetaDataValidator
+public class Validator
 {
   /// <summary>
   ///  Validate.

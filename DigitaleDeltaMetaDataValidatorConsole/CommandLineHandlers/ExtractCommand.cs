@@ -52,7 +52,7 @@ internal sealed class ExtractCommand : AsyncCommand<ExtractCommand.ExtractComman
 
     try
     {
-      var result     = await DigitaleDeltaMetaDataValidator.DigitaleDeltaMetaDataValidator.GetCsdlPropertiesAsync(settings.Examine).ConfigureAwait(true);
+      var result     = await DigitaleDeltaMetaDataValidator.Validator.GetCsdlPropertiesAsync(settings.Examine).ConfigureAwait(true);
       var properties = Helper.CompileValidationRules(result);
       
       Helper.WriteValidationRulesToCsv(properties, settings.Result);

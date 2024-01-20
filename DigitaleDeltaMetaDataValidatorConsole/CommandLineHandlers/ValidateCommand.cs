@@ -64,7 +64,7 @@ internal sealed class ValidateCommand : AsyncCommand<ValidateCommand.ValidateCom
 
     try
     {
-      var result = await DigitaleDeltaMetaDataValidator.DigitaleDeltaMetaDataValidator.ValidateAsync(settings.Source, settings.Examine).ConfigureAwait(true);
+      var result = await DigitaleDeltaMetaDataValidator.Validator.ValidateAsync(settings.Source, settings.Examine).ConfigureAwait(true);
       Helper.WriteStringArrayToFile(result, settings.Result);
 
       Helper.ReportFinished($"Inspection result written to file '{settings.Result}'");

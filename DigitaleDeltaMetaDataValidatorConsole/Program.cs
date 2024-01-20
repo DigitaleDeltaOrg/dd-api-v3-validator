@@ -13,3 +13,4 @@ app.Configure(config =>
 // args = [ "extract", "https://localhost:7071/v3/odata", "D:\\PropertyCheck2024.01.csv" ];
 
 return await app.RunAsync(args);
+
