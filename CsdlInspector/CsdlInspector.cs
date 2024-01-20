@@ -67,17 +67,6 @@ public static class CsdlInspector
 
     var csdlType = new CsdlType(edmType.FullTypeName())
     {
-      IsTemporal  = edmType.IsTemporal(),
-      IsDecimal   = edmType.IsDecimal(),
-      IsString    = edmType.IsString(),
-      IsUntyped   = edmType.IsUntyped(),
-      IsBinary    = edmType.IsBinary(),
-      IsStream    = edmType.IsStream(),
-      IsSpatial   = edmType.IsSpatial(),
-      IsGeography = edmType.IsGeography(),
-      IsGeometry  = edmType.IsGeometry(),
-      IsAbstract  = edmType.IsAbstract,
-      IsOpen      = edmType.IsOpen,
       IsRequired  = RequiredTypes.Contains(edmType.FullTypeName())
     };
 
@@ -85,12 +74,12 @@ public static class CsdlInspector
 
     foreach (var property in edmType.DeclaredProperties)
     {
-      InspectProperty(csdlType, property, false);
+      InspectProperty(csdlType, property);
     }
 
     foreach (var navProperty in edmType.NavigationProperties())
     {
-      InspectProperty(csdlType, navProperty, true);
+      InspectProperty(csdlType, navProperty);
     }
   }
 
@@ -99,11 +88,10 @@ public static class CsdlInspector
   /// </summary>
   /// <param name="csdlType">CsdlType to fill</param>
   /// <param name="property">Property to inspect</param>
-  /// <param name="isNavigational">Specifies if the property is a navigational property</param>
-  private static void InspectProperty(CsdlType csdlType, IEdmProperty property, bool isNavigational)
+  private static void InspectProperty(CsdlType csdlType, IEdmProperty property)
   {
     IEdmStructuredType? structuredType = null;
-    var                 csdlProperty   = CreateCsdlProperty(property, isNavigational);
+    var                 csdlProperty   = CreateCsdlProperty(property);
 
     csdlType.Properties ??= [];
 
@@ -112,7 +100,6 @@ public static class CsdlInspector
       var collectionElementType = property.Type.AsCollection().ElementType();
       if (collectionElementType.IsStructured())
       {
-        csdlProperty.IsEntity = collectionElementType.IsEntity();
         structuredType        = collectionElementType.AsStructured().StructuredDefinition();
       }
     }
@@ -132,51 +119,16 @@ public static class CsdlInspector
   ///   Create a new CSDL property and fill it with the basic values taken from the specified property.
   /// </summary>
   /// <param name="property">EdmProperty</param>
-  /// <param name="isNavigational">Specifies if the property is a navigational property</param>
   /// <returns>Newly created Csdl property</returns>
-  private static CsdlProperty CreateCsdlProperty(IEdmProperty property, bool isNavigational)
+  private static CsdlProperty CreateCsdlProperty(IEdmProperty property)
   {
     return new CsdlProperty
     {
-      IsNavigational    = isNavigational,
-      IsCollection      = property.Type.IsCollection(),
       Name              = property.Name,
       Type              = property.Type.FullName(),
       IsKey             = property.IsKey(),
-      IsStructured      = property.Type.IsStructured(),
-      IsComplex         = property.Type.IsComplex(),
       IsNullable        = property.Type.IsNullable,
-      IsEntity          = property.Type.IsEntity(),
-      IsDate            = property.Type.IsDate(),
-      IsBoolean         = property.Type.IsBoolean(),
-      IsPath            = property.Type.IsPath(),
-      IsEntityReference = property.Type.IsEntityReference(),
-      IsEnum            = property.Type.IsEnum(),
-      IsTypeDefinition  = property.Type.IsTypeDefinition(),
-      IsPrimitive       = property.Type.IsPrimitive(),
-      IsTemporal        = property.Type.IsTemporal(),
-      IsDuration        = property.Type.IsDuration(),
-      IsDateTimeOffset  = property.Type.IsDateTimeOffset(),
-      IsDecimal         = property.Type.IsDecimal(),
-      IsFloating        = property.Type.IsFloating(),
-      IsSingle          = property.Type.IsSingle(),
-      IsTimeOfDay       = property.Type.IsTimeOfDay(),
-      IsDouble          = property.Type.IsDouble(),
-      IsGuid            = property.Type.IsGuid(),
-      IsSignedIntegral  = property.Type.IsSignedIntegral(),
-      IsSByte           = property.Type.IsSByte(),
-      IsInt16           = property.Type.IsInt16(),
-      IsInt32           = property.Type.IsInt32(),
-      IsInt64           = property.Type.IsInt64(),
-      IsIntegral        = property.Type.IsIntegral(),
-      IsByte            = property.Type.IsByte(),
-      IsString          = property.Type.IsString(),
-      IsUntyped         = property.Type.IsUntyped(),
-      IsBinary          = property.Type.IsBinary(),
-      IsStream          = property.Type.IsStream(),
-      IsSpatial         = property.Type.IsSpatial(),
-      IsGeography       = property.Type.IsGeography(),
-      IsGeometry        = property.Type.IsGeometry()
+      IsString          = property.Type.IsString()
     };
   }
 

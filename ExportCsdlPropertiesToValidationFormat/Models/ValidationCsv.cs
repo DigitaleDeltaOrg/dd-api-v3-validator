@@ -1,4 +1,5 @@
-﻿namespace ExportCsdlPropertiesToValidationFormat.Models;
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
+namespace ExportCsdlPropertiesToValidationFormat.Models;
 
 public class ValidationCsv
 {

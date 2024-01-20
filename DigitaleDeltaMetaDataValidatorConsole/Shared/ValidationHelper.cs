@@ -39,20 +39,6 @@ public static class ValidationHelper
     }
   }
 
-  public static bool IsValidFilePath(string filePath)
-  {
-    FileInfo? fileInfo = null;
-    try
-    {
-      fileInfo = new FileInfo(filePath);
-    }
-    catch (ArgumentException) { }
-    catch (PathTooLongException) { }
-    catch (NotSupportedException) { }
-
-    return fileInfo != null;
-  }
-
   internal static void ReportIsRequired(string parameter)
   {
     AnsiConsole.MarkupLine($"[red]{parameter} is required[/]");

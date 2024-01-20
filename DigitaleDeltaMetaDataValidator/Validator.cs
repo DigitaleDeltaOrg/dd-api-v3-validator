@@ -42,7 +42,7 @@ public static class Validator
   /// <param name="csdlProperties">Properties read from the $metadata</param>
   /// <param name="fields">Validation specification from the validation file</param>
   /// <param name="errors">Errors, to be amended.</param>
-  private static void CheckForUnknownEntitiesAndProperties(Dictionary<string, CsdlType> csdlProperties, List<ValidationCsv> fields, List<string> errors)
+  private static void CheckForUnknownEntitiesAndProperties(IReadOnlyDictionary<string, CsdlType> csdlProperties, IEnumerable<ValidationCsv> fields, ICollection<string> errors)
   {
     var fieldsDictionary = fields.GroupBy(f => f.Entity).ToDictionary(g => g.Key, g => g.ToList());
 
@@ -71,7 +71,7 @@ public static class Validator
   /// <param name="csdlEntities">Properties read from the $metadata</param>
   /// <param name="fields">Validation specification from the validation file</param>
   /// <param name="errors">Errors, to be amended.</param>
-  private static void CheckForRequiredButMissingEntitiesAndProperties(Dictionary<string, CsdlType> csdlEntities, List<ValidationCsv> fields, List<string> errors)
+  private static void CheckForRequiredButMissingEntitiesAndProperties(Dictionary<string, CsdlType> csdlEntities, IEnumerable<ValidationCsv> fields, List<string> errors)
   {
     var fieldsDictionary = fields.Where(a => a is { PropertyRequired: true, EntityRequired: true }).GroupBy(f => f.Entity).ToDictionary(g => g.Key, g => g.ToList());
    
@@ -109,7 +109,6 @@ public static class Validator
   /// Retrieve CSDL properties from the $metadata URL.
   /// </summary>
   /// <param name="url">URL with the OData $metadata</param>
-  /// <param name="type">Name of the type to examine.</param>
   /// <returns>Dictionary of types by name, with their type definition and their properties.</returns>
   /// <exception cref="Exception"></exception>
   public static async Task<Dictionary<string, CsdlType>> GetCsdlPropertiesAsync(string url)

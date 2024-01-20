@@ -1,7 +1,6 @@
 ﻿using DigitaleDeltaMetaDataValidatorConsole.Shared;
 using Spectre.Console.Cli;
 using System.ComponentModel;
-using Spectre.Console;
 
 namespace DigitaleDeltaMetaDataValidatorConsole.CommandLineHandlers;
 

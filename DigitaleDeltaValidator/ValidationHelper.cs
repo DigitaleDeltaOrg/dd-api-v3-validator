@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Xml;
+﻿using System.Xml;
 
 namespace DigitaleDeltaValidator;
 
