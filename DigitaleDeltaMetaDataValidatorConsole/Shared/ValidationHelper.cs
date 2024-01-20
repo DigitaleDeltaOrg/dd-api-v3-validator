@@ -6,7 +6,7 @@ using Spectre.Console;
 
 namespace DigitaleDeltaMetaDataValidatorConsole.Shared;
 
-public static class Helper
+public static class ValidationHelper
 {
   public static bool IsUrlValid(string url)
   {

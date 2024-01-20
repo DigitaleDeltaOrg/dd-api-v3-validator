@@ -41,12 +41,12 @@ return;
 
 async Task<IResult> ValidateHandler(WebApplication webApplication, string folder, string url, string? version)
 {
-  if (!ValidatorHelper.IsUrlSafe(url)) 
+  if (!ValidationHelper.IsUrlSafe(url)) 
   {
     return Results.BadRequest("Invalid URL");
   }
 
-  if (await ValidatorHelper.IsContentSafeAsync(url).ConfigureAwait(false))
+  if (await ValidationHelper.IsContentSafeAsync(url).ConfigureAwait(false))
   {
     Results.BadRequest("Content is not JSON, or contains possible unsafe content");
   }

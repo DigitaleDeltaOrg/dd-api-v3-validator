@@ -9,7 +9,7 @@ namespace DigitaleDeltaMetaDataValidator;
 /// <summary>
 /// Validates a CSDL according to the specified CSV data located at validationUrl
 /// </summary>
-public class Validator
+public static class Validator
 {
   /// <summary>
   ///  Validate.
@@ -134,11 +134,17 @@ public class Validator
   {
     if (!IsUri(url))
     {
+      if (!File.Exists(url))
+      {
+        throw new Exception($"File not found: {url}");
+      }
+      
       return await File.ReadAllTextAsync(url).ConfigureAwait(false);
     }
 
     using var httpClient = new HttpClient();
     var       payload    = await httpClient.GetStringAsync(url).ConfigureAwait(false);
+    
     if (payload == null)
     {
       throw new Exception($"No data found at {url}.");

@@ -25,38 +25,38 @@ internal sealed class ValidateCommand : AsyncCommand<ValidateCommand.ValidateCom
   {
     if (string.IsNullOrWhiteSpace(settings.Source))
     {
-      Helper.ReportIsRequired(nameof(settings.Source));
+      ValidationHelper.ReportIsRequired(nameof(settings.Source));
       
       return 1;
     }
     
     if (string.IsNullOrWhiteSpace(settings.Examine))
     {
-      Helper.ReportIsRequired(nameof(settings.Examine));
+      ValidationHelper.ReportIsRequired(nameof(settings.Examine));
       
       return 1;
     }
 
     if (string.IsNullOrWhiteSpace(settings.Result))
     {
-      Helper.ReportIsRequired(nameof(settings.Result));
+      ValidationHelper.ReportIsRequired(nameof(settings.Result));
       
       return 1;
     }
     
-    if (Helper.IsUrl(settings.Examine) && !Helper.IsUrlValid(settings.Examine))
+    if (ValidationHelper.IsUrl(settings.Examine) && !ValidationHelper.IsUrlValid(settings.Examine))
     {
-      Helper.ReportInvalidUrl(settings.Examine);
+      ValidationHelper.ReportInvalidUrl(settings.Examine);
       
       return 1;
     }
     
-    if (Helper.IsUrl(settings.Examine))
+    if (ValidationHelper.IsUrl(settings.Examine))
     {
       using var client = new HttpClient();
-      if (!await Helper.CheckUrlAccessibility(client, settings.Examine + "/$metadata"))
+      if (!await ValidationHelper.CheckUrlAccessibility(client, settings.Examine + "/$metadata"))
       {
-        Helper.ReportNotAccessible(settings.Examine);
+        ValidationHelper.ReportNotAccessible(settings.Examine);
         
         return 1;
       }
@@ -65,14 +65,14 @@ internal sealed class ValidateCommand : AsyncCommand<ValidateCommand.ValidateCom
     try
     {
       var result = await DigitaleDeltaMetaDataValidator.Validator.ValidateAsync(settings.Source, settings.Examine).ConfigureAwait(true);
-      Helper.WriteStringArrayToFile(result, settings.Result);
+      ValidationHelper.WriteStringArrayToFile(result, settings.Result);
 
-      Helper.ReportFinished($"Inspection result written to file '{settings.Result}'");
+      ValidationHelper.ReportFinished($"Inspection result written to file '{settings.Result}'");
       return 0;
     }
     catch (Exception e)
     {
-      Helper.ReportError(e.Message);
+      ValidationHelper.ReportError(e.Message);
       
       return 1;
     }

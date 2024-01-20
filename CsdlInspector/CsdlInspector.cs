@@ -8,7 +8,12 @@ public static class CsdlInspector
 {
   private static readonly Dictionary<string, CsdlType> Types         = new();
 
-  private static readonly List<string> RequiredTypes = ["DigitaleDelta.Observation", "DigitaleDelta.ParameterContainer", "DigitaleDelta.Foi", "DigitaleDelta.Result" ];
+  private static readonly List<string> RequiredTypes = [
+    "DigitaleDelta.Observation", 
+    "DigitaleDelta.ParameterContainer", 
+    "DigitaleDelta.Foi", 
+    "DigitaleDelta.Result" 
+  ];
 
   /// <summary>
   ///   Inspect the specified type within the CSDL and extract referenced types and their properties.
@@ -27,19 +32,26 @@ public static class CsdlInspector
       throw new Exception("The provided CSDL cannot be null, empty, or consist only of white-space characters.");
     }
 
-    var stringReader  = new StringReader(csdl);
-    var xmlTextReader = new XmlTextReader(stringReader);
-    var edmModel      = CsdlReader.Parse(xmlTextReader);
-    var edmEntityType = GetTypeByName(edmModel, type);
-
-    if (edmEntityType == null)
+    try
     {
-      throw new Exception("Cannot find type in CSDL specification.");
+      using var stringReader  = new StringReader(csdl);
+      using var xmlTextReader = new XmlTextReader(stringReader);
+      var       edmModel      = CsdlReader.Parse(xmlTextReader);
+      var       edmEntityType = GetTypeByName(edmModel, type);
+
+      if (edmEntityType == null)
+      {
+        throw new Exception("Cannot find type in CSDL specification.");
+      }
+
+      InspectType(edmEntityType);
+
+      return Types;
     }
-
-    InspectType(edmEntityType);
-
-    return Types;
+    catch (Exception ex)
+    {
+      throw new Exception("An error occurred during the CSDL inspection.", ex);
+    }
   }
 
   /// <summary>

@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
+using System.Xml;
 
 namespace DigitaleDeltaValidator;
 
-public class ValidatorHelper
+internal static class ValidationHelper
 {
   internal static bool IsUrlSafe(string url)
   {
@@ -18,22 +19,20 @@ public class ValidatorHelper
 
   internal static async Task<bool> IsContentSafeAsync(string url)
   {
-    var httpClient = new HttpClient();
-
-    var httpResponse = await httpClient.GetAsync(url);
-    if (httpResponse.Content.Headers.ContentType?.MediaType != "application/json")
-    {
-      return false; // Content-Type was not application/json
-    }
-
-    var jsonContent = await httpResponse.Content.ReadAsStringAsync();
+    using var client  = new HttpClient();
+    var       content = await client.GetStringAsync(url);
     try
     {
-      JsonDocument.Parse(jsonContent);
-    
+      var xmlDoc = new XmlDocument
+      {
+        XmlResolver = null
+      }; 
+
+      xmlDoc.LoadXml(content);
+
       return true;
     }
-    catch (JsonException)
+    catch (XmlException)
     {
       return false;
     }
