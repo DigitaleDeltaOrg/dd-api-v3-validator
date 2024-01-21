@@ -1,5 +1,3 @@
-using System.Text.Json;
-using DigitaleDeltaValidator;
 using DigitaleDeltaValidator.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,9 +35,7 @@ app.MapGet("/versions", () => new VersionsController().VersionsHandler(app, fold
 
 app.MapGet("/validate", (HttpContext httpContext, [FromQuery] string url, [FromQuery] string? version) => new ValidationController(app, folderName).ValidateHandler(httpContext, url, version))
   .WithName("Validate")
-  .WithSummary("Validates the specified Url for compliance with the Digitale Delta Property Definitions. URl is required. If version is omitted, the current default version is used.")
+  .WithSummary("Validates the specified Url for compliance with the Digitale Delta Property Definitions. URL is required. If version is omitted, the current default version is used.")
   .WithOpenApi();
 
 app.Run();
-
-return;
