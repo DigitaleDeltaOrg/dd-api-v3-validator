@@ -16,4 +16,10 @@
       <ProjectReference Include="..\DigitaleDeltaMetaDataValidator\DigitaleDeltaMetaDataValidator.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="wwwroot\openapi.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

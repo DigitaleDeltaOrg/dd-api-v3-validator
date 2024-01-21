@@ -5,14 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 const string folderName = "ValidationFiles";
 var          builder    = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+var configuration = builder.Configuration;
+
+if (string.IsNullOrWhiteSpace(configuration["CurrentVersion"]))
+{
+  Console.WriteLine("Error: CurrentVersion is not set in the appsettings.json. Please set a value for it, I.e. \"CurrentVersion\":\"2024.01\"");
+  return;
+}
 
 var app = builder.Build();
 
 app.UseStaticFiles();
-app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
   c.SwaggerEndpoint("/openapi.json", "Digitale Delta Validator");
@@ -30,7 +34,7 @@ app.MapGet("/versions", () => VersionsHandler(app, folderName))
   .WithSummary("Lists the available versions of Digitale Delta validation definitions.")
   .WithOpenApi();
 
-app.MapGet("/validate", ([FromQuery]string url, [FromQuery] string? version) => ValidateHandler(app, folderName, url, version))
+app.MapGet("/validate", (HttpContext httpContext, [FromQuery] string url, [FromQuery] string? version) => ValidateHandler(httpContext, app, folderName, url, version))
   .WithName("Validate")
   .WithSummary("Validates the specified Url for compliance with the Digitale Delta Property Definitions. URl is required. If version is omitted, the current default version is used.")
   .WithOpenApi();
@@ -39,8 +43,13 @@ app.Run();
 
 return;
 
-async Task<IResult> ValidateHandler(WebApplication webApplication, string folder, string url, string? version)
+async Task<IResult> ValidateHandler(HttpContext httpContext, WebApplication webApplication, string folder, string url, string? version)
 {
+  if (!url.EndsWith("/$metadata", StringComparison.CurrentCultureIgnoreCase))
+  {
+    url += "/$metadata";
+  }
+
   if (!ValidationHelper.IsUrlSafe(url)) 
   {
     return Results.BadRequest("Invalid URL");
@@ -48,7 +57,7 @@ async Task<IResult> ValidateHandler(WebApplication webApplication, string folder
 
   if (await ValidationHelper.IsContentSafeAsync(url).ConfigureAwait(false))
   {
-    Results.BadRequest("Content is not JSON, or contains possible unsafe content");
+    Results.BadRequest("Content is not XML, or contains possible unsafe content");
   }
 
   var versions = GetVersions(webApplication, folder);
@@ -59,7 +68,7 @@ async Task<IResult> ValidateHandler(WebApplication webApplication, string folder
 
   if (!versions.Contains(version!))
   {
-    Results.BadRequest($"Unknown version: {version}. Check /versions for supported versions.");
+    Results.BadRequest($"Unknown version: {version}. Check {GetBaseUrl(httpContext)}/versions for supported versions.");
   }
 
   var versionFileContent = await File.ReadAllTextAsync(Path.Combine(webApplication.Environment.WebRootPath, folder, $"{version}.txt"));
@@ -90,4 +99,11 @@ IResult VersionsHandler(WebApplication webApplication, string s)
 IResult CurrentVersionHandler(WebApplication webApplication)
 {
   return Results.Ok(webApplication.Configuration["CurrentVersion"]);
+}
+
+string GetBaseUrl(HttpContext httpContext)
+{
+  var request = httpContext.Request;
+  var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+  return baseUrl;
 }
